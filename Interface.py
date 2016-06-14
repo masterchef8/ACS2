@@ -42,7 +42,7 @@ class Maze(object):
                         ['-1', '-1', '-1', '-1', '-1', '-1', '-1', '-1']]
         self.introduiceRobot()
         self.env = self.returnPerception(self.posx, self.posy)
-        self.perception = self.returnPerception(self.posx, self.posy) + [self.food] + [self.water]
+        self.perception = self.returnPerception(self.posx, self.posy) + [self.food] #+ [self.water]
         self.flag = False
         self.letalR = -10000
 
@@ -52,7 +52,7 @@ class Maze(object):
         self.food = 15
         self.water = 15
         self.flag = False
-        self.perception = self.returnPerception(self.posx, self.posy) + [self.food] + [self.water]
+        self.perception = self.returnPerception(self.posx, self.posy) + [self.food]# + [self.water]
 
     def returnPerception(self, posx, posy):
         return [self.matrice[posx][posy - 1], self.matrice[posx - 1][posy], self.matrice[posx][posy + 1],self.matrice[posx + 1][posy]]
@@ -77,37 +77,33 @@ class Maze(object):
         :param action: 0 = left; 1 = top; 2 = right; 3 = down
         """
         self.mouv = False
-        if action == 0:
-            if self.perception[0] != '-1' and 1 < self.posy < 7:
-                # Don't change posx
-                self.posy += -1
-                self.mouv = True
-        elif action == 1:
-            if self.perception[1] != '-1' and 1 < self.posx < 7:
-                self.posx += -1
-                self.mouv = True
-                # Don't change posy
-        elif action == 2:
-            if self.perception[2] != '-1' and 1 < self.posy < 7:
-                # Don't change posx
-                self.posy += 1
-                self.mouv = True
-        elif action == 3:
-            if self.perception[3] != '-1' and 1 < self.posx < 7:
-                self.posx += 1
-                # Don't change posy
-                self.mouv = True
+        if action == 0 and int(self.perception[0]) > -1 and 0 < self.posy-1 < 7:
+            # Don't change posx
+            self.posy += -1
+            self.mouv = True
+        if action == 1 and int(self.perception[1]) > -1 and 0 < self.posx-1 < 7:
+            self.posx += -1
+            self.mouv = True
+            # Don't change posy
+        if action == 2 and int(self.perception[2]) > -1 and 0 < self.posy+1 < 7:
+            # Don't change posx
+            self.posy += 1
+            self.mouv = True
+        if action == 3 and int(self.perception[3]) > -1 and 0 < self.posx+1 < 7:
+            self.posx += 1
+            # Don't change posy
+            self.mouv = True
 
         value = int(self.getValuePositionRobot())
 
         if value == 2:
             if self.food < 15 and self.mouv:
-                self.food = self.food + 4
+                self.food += 4
                 return 2000
             return 100
         elif value == 1:
             if self.water < 15 and self.mouv:
-                self.water = self.water + 4
+                self.water += 4
                 return 2000
             return 100
         elif value == 0:
@@ -118,7 +114,7 @@ class Maze(object):
                 self.stop()
                 return self.letalR
 
-        self.perception = self.returnPerception(self.posx, self.posy) + [self.food] + [self.water]
+        self.perception = self.returnPerception(self.posx, self.posy) + [self.food] #+ [self.water]
 
         return 0
 

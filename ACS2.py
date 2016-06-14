@@ -71,7 +71,7 @@ def gen_match_set(pop: list, percept: list):
     :rtype: list
     """
     ma = []
-    if time == 0:
+    if time == 0 or len(pop) == 0:
         for i in range(cons.nbAction):
             newcl = Classifier()
             newcl.condition = [cons.symbol] * cons.lenCondition
@@ -133,7 +133,8 @@ def get_differences(mark, percept: list) -> list:
         for i in range(len(percept)):
             if mark[i] != percept[i]:
                 type1 += 1
-                # type2 += 1
+            if int(mark[i]) > 1:
+                type2 += 1
 
         if type1 > 0:
             type1 = random() * type1
@@ -192,7 +193,7 @@ def expected_case(cli: Classifier, percept: list) -> Classifier:
             remove_random_spec_att(child.condition)
             spec -= 1
             while spec + spec_new > cons.beta:
-                if spec > 0 and random < 0.5:
+                if spec > 0 and random() < 0.5:
                     remove_random_spec_att(child.condition)
                     spec -= 1
                 else:
@@ -383,7 +384,7 @@ def apply_crossover(cl1: Classifier, cl2: Classifier):
 
 def delete_classifier(aset: list, pop: list):
     summation = 0
-    for c in pop:
+    for c in aset:
         summation += c.num
     while cons.inSize + summation > cons.thetaAS:
         cldel = None
@@ -405,9 +406,11 @@ def delete_classifier(aset: list, pop: list):
             if cldel.num > 1:
                 cldel.num -= 1
             else:
-                if classifier.gold is False:
-                    pop.remove(classifier)
-                    remove(classifier, aset)
+                pop.remove(classifier)
+                remove(classifier, aset)
+        summation = 0
+        for c in aset:
+            summation += c.num
 
 
 def add_ga_classifier(aset: list, pop: list, classifier: Classifier):
@@ -475,6 +478,8 @@ def choose_action(aset: list):
         c = choice([i for i in range(cons.nbAction)])
         return c
     else:
+        if len(aset) < 4:
+            pass
         bestCL = aset[0]
         for classifierr in aset:
             if classifierr.effect != [cons.symbol] * cons.lenCondition and classifierr.q * classifierr.r > bestCL.q * bestCL.r:
@@ -520,6 +525,8 @@ if __name__ == '__main__':
     while True:
 
         M = gen_match_set(Pop, perception)
+        if len(Pop) < 4:
+            pass
         if A_ is not None:
             apply_alp(A_, perception_, perception, time, Pop, act)
             apply_rl(A_, p)
@@ -546,7 +553,7 @@ if __name__ == '__main__':
             A_ = None
         # ------------------------------------------------------
 
-        if time % 1 == 0:
+        if time % 100 == 0:
             perfClasseur.append(len(Pop))
             m = 0
             for cl in Pop:
@@ -554,7 +561,8 @@ if __name__ == '__main__':
             m /= len(Pop)
             meanQ.append(m)
             print(m, len(Pop))
-        if time == 10000:
+            print(time)
+        if time == 30000:
             break
 
     print(len(Pop))
