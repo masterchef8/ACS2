@@ -15,25 +15,53 @@ cons = Constant.Constants()
 
 
 class Classifier(object):
-    def __init__(self):
+    def __init__(self, copy=None):
 
-        self.condition = [cons.symbol]*cons.lenCondition
+        self.condition = [cons.symbol] * cons.lenCondition
 
-        self.action = []
+        self.action = None
 
-        self.effect = [cons.symbol]*cons.lenCondition
+        self.effect = [cons.symbol] * cons.lenCondition
         self.q = 0.5  # quality
         self.r = 0  # reward
 
         self.mark = None  # All cases were effect was not good
         self.ir = 0  # Immediate reward
-        self.t = 0  # Has been created at this time
+        self.t = None  # Has been created at this time
         self.tga = 0  # Last time that self was part of action set with GA
         self.alp = 0  # Last time that self underwent ALP update
 
         self.aav = 0  # application average
         self.exp = 0  # experience
         self.num = 1  # Still Micro or macro stuffs
+        self.gold = False
+        if self.condition == [cons.symbol] * cons.lenCondition:
+            if self.effect == [cons.symbol] * cons.lenCondition:
+                if self.t == 0:
+                    self.gold = True
+        else:
+            self.gold = False
+
+        if copy is not None:
+            assert type(copy) is Classifier, "Wrong type for copy"
+
+            self.condition = copy.condition
+
+            self.action = copy.action
+
+            self.effect = copy.effect
+            self.q = copy.q  # quality
+            self.r = copy.r  # reward
+
+            self.mark = copy.mark  # All cases were effect was not good
+            self.ir = copy.ir  # Immediate reward
+            self.t = copy.t  # Has been created at this time
+            self.tga = copy.tga  # Last time that self was part of action set with GA
+            self.alp = copy.alp  # Last time that self underwent ALP update
+
+            self.aav = copy.aav  # application average
+            self.exp = copy.exp  # experience
+            self.num = copy.num  # Still Micro or macro stuffs
 
     def isSubsumer(self, cl):
         """
